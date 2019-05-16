@@ -1,36 +1,56 @@
 @extends('layouts.app')
 
 @section('content')
-  <!-- Bootstrap шаблон... -->
-  
-  <div class="panel-body">
-    <!-- Отображение ошибок проверки ввода -->
-    @include('common.errors')
-    <!-- Форма новой задачи -->
-    <form action="{{ route('post.store') }}" method="POST" class="form-horizontal">
-      {{ csrf_field() }}
-      <!-- Имя задачи -->
-      <div class="form-group">
-        <label  class="col-sm-3 control-label">Название</label>
-        <div class="col-sm-6">
-          <input type="text" name="name" id="post-name" class="form-control">
-        </div>
-        <div class="col-sm-6">
-            <label  class="col-sm-3 control-label">Текст</label>
-            <textarea name="text" id="post-text" class="form-control">
-                
-            </textarea>
-        </div>
-      </div>
-      <!-- Кнопка добавления задачи -->
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-6">
-          <button type="submit" class="btn btn-default">
-            <i class="fa fa-plus"></i> Добавить задачу
-          </button>
-        </div>
-      </div>
+@if (count($posts) > 0)
+<div class="panel panel-default">
+    <div class="panel-heading">
+    </div>
+
+    <div class="panel-body">
+        <table class="table table-striped">
+            <!-- Заголовок таблицы -->
+            <thead>
+                <tr>
+                    <th>Новость</th>
+                    <th>Удаление</th>
+                </tr>
+            </thead>
+
+            <!-- Тело таблицы -->
+            <tbody>
+                @foreach ( $posts as $post )
+                <tr>
+                    <!-- Имя задачи -->
+                    <td class="table-text">
+                        <div><a href="{{route('posts.show',$post->id)}}">{{ $post->name }}</a></div>
+                    </td>
+                    <td>
+                        @if( $post->user_id === $user_id )
+
+                        <form action="{{ route('posts.destroy',$post->id) }}" method="POST">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
+
+                            <button type="submit" id="delete-post-{{ $post->id }}" class="btn btn-danger">
+                                <i class="fa fa-btn fa-trash"></i>Удалить
+                            </button>
+                        </form>
+
+                        @endif
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <form action="{{ route('posts.create') }}" method="POST">
+        {{ csrf_field() }}
+        {{ method_field('GET') }}
+
+        <button type="submit"  class="btn btn-success">
+            <i class="fa fa-btn fa-create"></i>Добавить
+        </button>
     </form>
-  </div>
-  <!-- TODO: Текущие задачи -->
+</div>
+@endif
 @endsection

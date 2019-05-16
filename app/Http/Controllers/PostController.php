@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use App\Post;
 
 class PostController extends Controller {
 
@@ -17,9 +18,12 @@ class PostController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request) {
-        $user_posts=$request->user()->posts()->get();
-        $posts=Post::all();
-        return view('posts.index');
+        $user_id = $request->user()->id;
+        $posts = Post::all();
+        return view('posts.index', [
+            'posts' => $posts,
+            'user_id' => $user_id,
+        ]);
     }
 
     /**
@@ -28,7 +32,7 @@ class PostController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -43,10 +47,10 @@ class PostController extends Controller {
             'text' => 'required',
         ]);
         $request->user()->posts()->create([
-            'name'=>$request->name,
-            'text'=>$request->text,
+            'name' => $request->name,
+            'text' => $request->text,
         ]);
-        return redirect(route('post.index'));
+        return redirect(route('posts.index'));
     }
 
     /**
@@ -55,8 +59,10 @@ class PostController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {
-        //
+    public function show(Post $post) {
+        return view('posts.show',[
+            'post' => $post,
+        ]);
     }
 
     /**
@@ -86,8 +92,10 @@ class PostController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
-        //
+    public function destroy(Post $post) {
+        $this->authorize('destroy',$post);
+        $post->delete();
+        return redirect(route('posts.index'));
     }
 
 }

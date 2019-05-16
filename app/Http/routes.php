@@ -21,6 +21,8 @@ Route::auth();
 
 Route::get('/home', 'HomeController@index');
 
-Route::get('/posts', 'PostController@index')->name('post.index');
-Route::post('/posts', 'PostController@store')->name('post.store');
-Route::delete('/posts/{post}', 'PostController@destroy')->name('post.destroy');
+Route::get('/posts', 'PostController@index')->name('posts.index');
+Route::get('/posts/create', 'PostController@create')->name('posts.create');
+Route::post('/posts', 'PostController@store')->name('posts.store');
+Route::get('/posts/{post}', 'PostController@show')->name('posts.show');
+Route::delete('/posts/{post}', 'PostController@destroy')->name('posts.destroy');
